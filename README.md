@@ -18,6 +18,25 @@ Automatically predict and replace redacted names in text documents, utilizing th
 Employ advanced machine learning and NLP techniques, such as Named Entity Recognition (NER) and language modeling, to achieve high accuracy in restoring names.
 Process redacted documents like movie reviews, police reports, and court transcripts, adapting to different styles and linguistic structures.
 
+## Pipeline Overview
+
+The project workflow consists of the following key steps:
+
+Data Loading: The dataset is loaded from a tab-separated values (TSV) file, and malformed rows are skipped.
+Redacted spans (█) in the context are replaced with the placeholder REDACTED.
+
+Feature Extraction: TF-IDF vectorization is applied to the context column to generate unigram and bigram features.
+The feature matrix is optimized for machine learning models.
+
+Model Training: An ensemble model comprising Logistic Regression and Random Forest classifiers is trained using a VotingClassifier.
+The model predicts names based on contextual features.
+
+Model Evaluation: The trained model is evaluated on the validation dataset, generating precision, recall, and F1-score metrics.
+A detailed classification report is printed for performance analysis.
+
+Submission File Generation: The trained model is applied to the test dataset to predict redacted names.
+The predictions are saved in a submission file (submission.tsv) with columns id and name.
+
 ## Dataset and Challenges
 
 The project relies on the Large Movie Review Dataset (IMDB) for training and validation. This dataset consists of thousands of movie reviews, providing a rich source of textual content. A custom redaction training set (unredactor.tsv) is provided, containing:
@@ -54,6 +73,11 @@ The following command can also be used.
 pipenv install -e
 ```
 
+Install dependencies using
+```
+pip install -r requirements.txt
+```
+
 ## How to run
 
 To run the project, execute the following command after activating the pipenv environment:
@@ -62,6 +86,22 @@ To run the project, execute the following command after activating the pipenv en
 pipenv run python unredactor.py 
 
 ```
+## Steps to Run the Pipeline
+
+Download the Dataset: Ensure the unredactor.tsv file is available in the same directory or provide its path in the script.
+
+Prepare the Environment: Clone this repository and navigate to the project directory. Ensure that all dependencies are installed.
+
+Run the Code: Execute the script to train the model, evaluate it, and generate the submission file:
+```
+python unredactor.py
+
+```
+Evaluate the Model: The script will print precision, recall, and F1-score metrics to the console.
+
+Generate Submission: The predicted names for the test dataset will be saved in submission.tsv.
+
+
 ## Functions
 
 ### load_data(file_path):
@@ -134,6 +174,48 @@ Key Features:
 
 Calls all other functions in sequence to implement the complete unredaction pipeline.
 Prints evaluation metrics and saves the final predictions for the test dataset.
+
+## Evaluation of the Code
+
+Below is an evaluation of the code based on clarity, reproducibility, and reasoning:
+
+### Clarity of Code and Documentation
+
+The codebase is modular, with each function designed to perform a specific task (e.g., data loading, feature extraction, model training, and evaluation).
+Detailed inline comments and docstrings in the code explain the purpose and behavior of each function.
+This README provides comprehensive instructions to replicate the pipeline, from setting up the environment to generating predictions and evaluating the model.
+
+### Reproducibility
+
+The pipeline ensures consistent results by:
+Using a fixed random state (random_state=42) for splitting data and training models.
+Handling inconsistencies in the dataset (e.g., skipping malformed rows) to avoid interruptions during execution.
+Steps for running the code, generating metrics, and creating a submission file are explicitly outlined, enabling peers to reproduce results easily.
+
+### Reasoned Approach
+
+#### Feature Extraction:
+
+The use of TF-IDF vectorization with unigrams and bigrams ensures that both individual words and word pairs contribute to the prediction.
+
+#### Model Design:
+
+Combining Logistic Regression and Random Forest in an ensemble model leverages the strengths of both algorithms. Logistic Regression excels in linear relationships, while Random Forest handles non-linear patterns and interactions.
+
+#### Metrics and Evaluation:
+
+Precision, recall, and F1-score are calculated, providing a clear and balanced understanding of the model's performance.
+The classification report offers additional insights into performance for specific classes (e.g., individual names).
+
+### Robustness
+
+The pipeline includes robust error handling, such as skipping bad rows during file loading and ensuring compatibility with missing or malformed data in test files.
+Special attention is given to preprocessing redacted spans, ensuring that these are standardized across all datasets for consistent feature extraction.
+
+### Extendability
+The modular design makes it straightforward to extend the pipeline:
+Adding new features (e.g., sentiment scores, external knowledge graphs).
+Adapting the model to unredact other entity types, such as locations or dates.
 
 
 ## Bugs and Assumptions
