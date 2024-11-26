@@ -41,3 +41,137 @@ Context-Aware Prediction: Uses the textual environment around redacted names to 
 Flexible Feature Extraction: Incorporates linguistic features, text patterns, and name frequencies for accurate predictions.
 
 Scalable and Reproducible: The pipeline is designed to handle large datasets efficiently and is easily replicable for other redaction/unredaction tasks.
+
+# How to install
+Ensure you have pipenv installed otherwise install it using the following command.
+
+```
+pip install pipenv
+```
+The following command can also be used.
+
+```
+pipenv install -e
+```
+
+## How to run
+
+To run the project, execute the following command after activating the pipenv environment:
+
+```
+pipenv run python unredactor.py 
+
+```
+## Functions
+
+### load_data(file_path):
+
+Description: Loads and preprocesses the dataset from a given file path. Handles irregular lines gracefully by skipping rows with unexpected formats and applies preprocessing to ensure redacted spans (e.g., █) are replaced with the placeholder "REDACTED".
+
+Key Features:
+
+Uses pandas to read tab-separated files.
+Ensures the 'context' column is processed as a string to handle cases where non-string values might appear.
+Returns a DataFrame with cleaned data for further processing.
+
+### extract_features(data, vectorizer=None, fit=True):
+
+Description: Extracts features from the context column using the Term Frequency-Inverse Document Frequency (TF-IDF) method. This method converts textual data into numerical vectors for machine learning models.
+
+Key Features:
+
+Supports n-gram extraction (unigrams and bigrams).
+Limits the feature set to the top 5000 most significant features to optimize performance.
+If fit=True, trains the vectorizer; otherwise, transforms data using a pre-trained vectorizer.
+Returns the feature matrix and the TF-IDF vectorizer object.
+
+### train_model(features, labels)
+
+Description: Trains an ensemble model consisting of Logistic Regression and Random Forest classifiers using a VotingClassifier. The model predicts the names based on redacted contexts.
+
+Key Features:
+
+Splits the dataset into training and validation sets.
+Combines multiple algorithms (Logistic Regression and Random Forest) to improve prediction accuracy.
+Returns the trained ensemble model along with the validation feature matrix and labels.
+
+### evaluate_model(model, X_val, y_val)
+
+Description: Evaluates the trained model's performance using the validation dataset. Outputs classification metrics, including precision, recall, and F1-score.
+
+Key Features:
+
+Predicts labels for the validation dataset.
+Generates a detailed classification report for performance analysis.
+Returns precision, recall, and F1-score for further evaluation.
+
+### predict_name(model, vectorizer, context)
+
+Description: Predicts the most likely name to fill a redacted span in the given context.
+
+Key Features:
+
+Transforms the input context into a numerical feature vector using the TF-IDF vectorizer.
+Leverages the trained ensemble model to make predictions.
+Returns the predicted name.
+
+### generate_submission(model, vectorizer, test_file, output_file)
+
+Description: Generates a submission file by applying the model to a test dataset. Redacts test file contexts, predicts names, and writes the results to a tab-separated file.
+
+Key Features:
+
+Handles irregular or improperly formatted rows in the test dataset.
+Cleans and processes the test contexts before making predictions.
+Produces a submission file in the required format with columns id and name.
+Provides error handling to ensure robustness against unexpected test file issues.
+
+### main()
+
+Description: Coordinates the entire process from loading data to training, evaluation, and submission generation.
+
+Key Features:
+
+Calls all other functions in sequence to implement the complete unredaction pipeline.
+Prints evaluation metrics and saves the final predictions for the test dataset.
+
+
+## Bugs and Assumptions
+
+### Bugs
+
+Contextual Ambiguity in Name Prediction: The model relies heavily on the context around the redacted name for prediction. In cases where the context is vague or lacks sufficient information, the predicted name may be inaccurate. 
+
+Length-Based Prediction Errors: Since the length of the redaction (█) is used as a feature, predictions may disproportionately favor names of similar lengths, even when they are contextually inappropriate.
+
+Overfitting on Training Data: The ensemble model may overfit to the specific patterns in the training dataset, reducing its generalizability to unseen data, especially if the context patterns differ significantly.
+
+Handling Special Characters in Contexts: Contexts with special characters, emojis, or uncommon encodings may cause the feature extraction process (e.g., TF-IDF vectorization) to misinterpret or discard relevant text.
+
+Misalignment in Test Data Columns: If the test data has unexpected column names or structure, the code may fail to process it correctly, requiring manual adjustments to the column mappings.
+
+Multiple Valid Names: In contexts where multiple names could be valid, the model selects only one name, potentially overlooking equally valid alternatives.
+
+Skipped Lines in Input Files: Lines skipped during file parsing (due to formatting issues) are not logged in detail, making it difficult to trace specific errors or recover missing data.
+
+Submission File Formatting: If test data contains unexpected formatting or missing values, the generated submission file may have incomplete or inconsistent entries.
+
+### Assumptions
+
+Redaction Consistency: The project assumes that all redactions in the dataset are represented as continuous blocks of █ characters with lengths matching the redacted names. Deviations from this format may lead to incorrect preprocessing or feature extraction.
+
+Text-Based Context: The model assumes that the surrounding context provides sufficient linguistic clues to predict the redacted name. Contexts without meaningful references (e.g., "This is a great movie. ███ did well.") may result in inaccurate predictions.
+
+Balanced Dataset: The training dataset is assumed to have a balanced and diverse distribution of names and contexts. If the dataset is biased, the model may perform poorly on underrepresented patterns.
+
+UTF-8 Encoding: All input files are assumed to be encoded in UTF-8. Files with different encodings may cause errors during reading or processing.
+
+Unique Names: Each redacted span is assumed to correspond to a single, unique name. The model does not account for cases where multiple names could occupy the same span.
+
+Fixed Column Structure: The input datasets (training, validation, and test) are assumed to have consistent columns (split, name, and context). Changes in the column structure may require updates to the file parsing logic.
+
+Predictive Features: The project assumes that features such as n-grams, the length of the redacted text, and surrounding words are sufficient for accurate predictions. More complex linguistic features or external knowledge bases are not considered.
+
+Conceptual Simplicity: The redacted names are assumed to be straightforward (e.g., proper nouns, full names) and not influenced by deeper semantic or cultural nuances that the model may not capture.
+
+Model Resource Availability: The project assumes sufficient computational resources for training and evaluating ensemble models. Limited resources may necessitate reducing model complexity or feature set size.

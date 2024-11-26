@@ -34,14 +34,6 @@ def extract_features(data, vectorizer=None, fit=True):
         features = vectorizer.transform(data['cleaned_context'])
     return features, vectorizer
 
-
-# def train_model(features, labels):
-#     """Train a Random Forest model."""
-#     X_train, X_val, y_train, y_val = train_test_split(features, labels, test_size=0.2, random_state=42)
-#     model = RandomForestClassifier(n_estimators=100, random_state=42)
-#     model.fit(X_train, y_train)
-#     return model, X_val, y_val
-
 def train_model(features, labels):
     """Train an ensemble model."""
     X_train, X_val, y_train, y_val = train_test_split(features, labels, test_size=0.2, random_state=42)
