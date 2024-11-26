@@ -217,6 +217,20 @@ The modular design makes it straightforward to extend the pipeline:
 Adding new features (e.g., sentiment scores, external knowledge graphs).
 Adapting the model to unredact other entity types, such as locations or dates.
 
+## Test cases
+
+### Explanation of Tests
+
+#### test_load_data.py:
+
+Verifies the load_data function processes input files correctly and produces a cleaned_context column.
+Ensures redacted spans (█) are replaced with the placeholder REDACTED.
+
+#### test_extract_features.py:
+
+Tests the TF-IDF feature extraction process.
+Checks the shape of the generated feature matrix and ensures the vectorizer is correctly initialized.
+
 
 ## Bugs and Assumptions
 
