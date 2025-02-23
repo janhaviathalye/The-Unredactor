@@ -1,6 +1,4 @@
-# cis6930fa24-project2
-
-Project 2 - CIS 6930: Data Engineering Fall 2024
+# The Unredactor
 
 Name: Janhavi Athalye
 
@@ -8,7 +6,7 @@ Name: Janhavi Athalye
 
 ## Overview
 
-In a world where privacy and security are paramount, sensitive information is often redacted from documents to protect identities and comply with legal and ethical standards. However, the reverse process—predicting and recovering redacted information—has its own set of applications, such as reconstructing anonymized datasets for research or testing the robustness of redaction techniques. Manual unredaction is both error-prone and labor-intensive. Project 2: The Unredactor leverages cutting-edge Natural Language Processing (NLP) techniques to automate the unredaction process, specifically focusing on identifying and restoring redacted personal names.
+In a world where privacy and security are paramount, sensitive information is often redacted from documents to protect identities and comply with legal and ethical standards. However, the reverse process—predicting and recovering redacted information—has its own set of applications, such as reconstructing anonymized datasets for research or testing the robustness of redaction techniques. Manual unredaction is both error-prone and labor-intensive. The Unredactor leverages cutting-edge Natural Language Processing (NLP) techniques to automate the unredaction process, specifically focusing on identifying and restoring redacted personal names.
 
 ## Key Features
 
